@@ -1,0 +1,371 @@
+@import "tailwindcss";
+
+/*
+ * As cores vêm do site.config.ts (theme) e são aplicadas como variáveis no <html>.
+ * Os valores abaixo são só o padrão caso alguma variável falte.
+ */
+:root {
+  --brand: #65705f;
+  --brand-contrast: #ffffff;
+  --brand-soft: #e1e3d6;
+  --ink: #221e1f;
+  --muted: #57534f;
+  --surface: #eff0eb;
+  --surface-alt: #e4e6dd;
+  --line: #cbcebf;
+  --salvia: #b3b792;
+  --areia: #c3b399;
+  --radius: 4px;
+}
+
+@theme inline {
+  --color-brand: var(--brand);
+  --color-brand-contrast: var(--brand-contrast);
+  --color-brand-soft: var(--brand-soft);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-line: var(--line);
+  --color-salvia: var(--salvia);
+  --color-areia: var(--areia);
+  --radius-brand: var(--radius);
+  --font-display: var(--font-display), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Estilos de base na camada "base": utilitários do Tailwind sempre ganham deles. */
+@layer base {
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display), Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  text-wrap: balance;
+  letter-spacing: -0.01em;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+:focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+::selection {
+  background: var(--brand-soft);
+  color: var(--ink);
+}
+}
+
+/*
+ * Classes de componente ficam na camada "components": utilitários do Tailwind (hidden, px-4, mt-6...)
+ * continuam valendo por cima delas.
+ */
+@layer components {
+/* Links de texto: sublinhado discreto que fica cheio no hover */
+.link {
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--brand) 45%, transparent);
+}
+.link:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Botões */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-decoration: none;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+.btn-primary {
+  background: var(--brand);
+  color: var(--brand-contrast);
+}
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--brand) 86%, black);
+}
+.btn-secondary {
+  border: 1.5px solid color-mix(in srgb, var(--ink) 35%, transparent);
+  color: var(--ink);
+  background: transparent;
+}
+.btn-secondary:hover {
+  border-color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+}
+.btn-inverse {
+  background: var(--brand-contrast);
+  color: var(--brand);
+}
+.btn-inverse:hover {
+  background: color-mix(in srgb, var(--brand-contrast) 88%, var(--brand));
+}
+
+/* Corpo dos artigos (HTML do CMS) */
+.prose-outbox {
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--ink);
+  overflow-wrap: break-word;
+}
+.prose-outbox > * + * {
+  margin-top: 1.25em;
+}
+.prose-outbox h2 {
+  font-size: 1.75rem;
+  line-height: 1.25;
+  font-weight: 500;
+  margin-top: 2.25em;
+  scroll-margin-top: 6rem;
+}
+.prose-outbox h3 {
+  font-size: 1.375rem;
+  line-height: 1.3;
+  font-weight: 500;
+  margin-top: 1.85em;
+  scroll-margin-top: 6rem;
+}
+.prose-outbox h4 {
+  font-size: 1.125rem;
+  font-weight: 650;
+  margin-top: 1.6em;
+}
+.prose-outbox h2 + *,
+.prose-outbox h3 + *,
+.prose-outbox h4 + * {
+  margin-top: 0.6em;
+}
+.prose-outbox a {
+  color: var(--brand);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.prose-outbox strong {
+  font-weight: 650;
+}
+.prose-outbox ul,
+.prose-outbox ol {
+  padding-left: 1.4em;
+}
+.prose-outbox ul {
+  list-style: disc;
+}
+.prose-outbox ol {
+  list-style: decimal;
+}
+.prose-outbox li + li {
+  margin-top: 0.45em;
+}
+.prose-outbox li::marker {
+  color: var(--brand);
+}
+.prose-outbox blockquote {
+  border-left: 3px solid var(--brand);
+  padding: 0.25em 0 0.25em 1.1em;
+  color: var(--muted);
+  font-style: italic;
+}
+.prose-outbox img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+.prose-outbox figcaption {
+  margin-top: 0.6em;
+  font-size: 0.9rem;
+  color: var(--muted);
+  text-align: center;
+}
+.prose-outbox hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2.5em 0;
+}
+.prose-outbox code {
+  font-size: 0.9em;
+  background: var(--surface-alt);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+.prose-outbox pre {
+  background: var(--ink);
+  color: var(--surface);
+  padding: 1em 1.2em;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  font-size: 0.9rem;
+}
+.prose-outbox pre code {
+  background: none;
+  padding: 0;
+}
+.prose-outbox table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.prose-outbox th,
+.prose-outbox td {
+  border-bottom: 1px solid var(--line);
+  padding: 0.6em 0.8em;
+  text-align: left;
+  vertical-align: top;
+}
+.prose-outbox th {
+  font-weight: 650;
+}
+
+/* FAQ com <details> */
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+}
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.faq-item .faq-icon {
+  transition: transform 0.2s ease;
+}
+.faq-item[open] .faq-icon {
+  transform: rotate(45deg);
+}
+
+/*
+ * Cota: linha de medida de desenho técnico (traço com marcas nas pontas) usada como legenda
+ * de foto. Diz o que é e onde fica, como a cota diz a medida no projeto.
+ */
+.cota {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.35;
+}
+.cota::before,
+.cota::after {
+  content: "";
+  flex: 1 1 1.5rem;
+  min-width: 1.5rem;
+  height: 9px;
+  border-bottom: 1px solid var(--salvia);
+  border-inline: 1px solid var(--salvia);
+  transform: translateY(-4px);
+}
+.cota::before {
+  border-right: 0;
+}
+.cota::after {
+  border-left: 0;
+}
+.cota-start::before {
+  flex: 0 0 1.5rem;
+}
+.cota-on-dark {
+  color: color-mix(in srgb, var(--surface) 78%, transparent);
+}
+.cota-on-dark::before,
+.cota-on-dark::after {
+  border-color: color-mix(in srgb, var(--surface) 45%, transparent);
+}
+
+/* Topo da Home. Celular: título, foto e texto (a foto entra na primeira tela). Tablet em diante: texto à esquerda, foto à direita. */
+.hero-grid {
+  display: grid;
+  grid-template-areas: "title" "media" "body";
+}
+@media (min-width: 768px) {
+  .hero-grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-rows: 1fr auto;
+    grid-template-areas: "title media" "body media";
+  }
+}
+
+/* Topo da Home: o painel de madeira abre a porta oculta uma vez, depois que a página carrega. */
+.door-open {
+  opacity: 0;
+  animation: door-open 1.6s cubic-bezier(0.4, 0, 0.2, 1) 1.1s forwards;
+}
+@keyframes door-open {
+  to {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .door-open {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Carrossel de projetos no celular: rola na horizontal com encaixe, sem barra visível. */
+.snap-row {
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 1rem;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+@media (min-width: 640px) {
+  .snap-row {
+    scroll-padding-inline: 1.5rem;
+  }
+}
+.snap-row::-webkit-scrollbar {
+  display: none;
+}
+.snap-row > * {
+  scroll-snap-align: start;
+}
+}
