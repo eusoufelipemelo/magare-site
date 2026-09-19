@@ -35,6 +35,10 @@ export function SiteEffects() {
   }, []);
 
   useEffect(() => {
+    // página nova: recalcula até onde dá para rolar (o Lenis guarda o limite da página anterior)
+    const frame = requestAnimationFrame(() => window.__lenis?.resize());
+    const onLoad = () => window.__lenis?.resize();
+    window.addEventListener("load", onLoad);
     document.querySelectorAll("main h1:not([data-reveal]), main h2:not([data-reveal])").forEach((el) => {
       if (!el.closest("[data-reveal]")) el.setAttribute("data-reveal", "fade");
     });
@@ -49,7 +53,11 @@ export function SiteEffects() {
       { rootMargin: "0px 0px -6% 0px", threshold: 0.08 },
     );
     document.querySelectorAll("[data-reveal]:not([data-revealed])").forEach((el) => io.observe(el));
-    return () => io.disconnect();
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("load", onLoad);
+      io.disconnect();
+    };
   }, [pathname]);
 
   return null;

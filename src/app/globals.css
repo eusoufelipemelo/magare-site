@@ -335,17 +335,6 @@ p {
   scroll-snap-align: start;
 }
 
-/* Rolagem suave (Lenis) */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis:not(.lenis-autoToggle).lenis-stopped {
-  overflow: clip;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
 
 /*
  * Títulos: cada palavra sobe de dentro de uma máscara quando o título entra na tela.
@@ -587,4 +576,19 @@ select.field {
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+}
+
+/*
+ * Rolagem suave (Lenis). Fora das camadas de propósito: precisa vencer o "h-full" do <html>,
+ * senão o <html> fica com a altura da tela e o Lenis não percebe quando a página cresce.
+ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: clip;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
 }
