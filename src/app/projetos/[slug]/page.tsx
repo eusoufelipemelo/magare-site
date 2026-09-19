@@ -51,7 +51,14 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
 
   const index = projects.findIndex((p) => p.slug === project.slug);
   const next = projects[(index + 1) % projects.length];
-  const [lead, ...rest] = project.images;
+  // Duas colunas equilibradas pela altura das fotos, mantendo a ordem: as duas primeiras ficam lado a lado.
+  const columns: (typeof project.images)[] = [[], []];
+  const heights = [0, 0];
+  for (const img of project.images) {
+    const c = heights[0] <= heights[1] ? 0 : 1;
+    columns[c].push(img);
+    heights[c] += img.height / img.width;
+  }
   const c = siteConfig.contact;
   const wa = whatsappUrl(c.whatsapp, `Olá! Vi o projeto "${project.title}" no site da Magare e gostaria de conversar sobre o meu espaço.`);
 
@@ -107,30 +114,22 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
 
       <section aria-label={`Fotos do projeto ${project.title}`}>
         <Container>
-          <figure>
-            <Image
-              src={lead.src}
-              alt={lead.alt}
-              width={lead.width}
-              height={lead.height}
-              loading="eager"
-              fetchPriority="high"
-              sizes="(min-width: 1280px) 1216px, 100vw"
-              className={`h-auto w-full bg-surface-alt ${lead.height > lead.width ? "mx-auto sm:max-h-[88vh] sm:w-auto" : ""}`}
-            />
-            <figcaption className="cota mt-4">{project.title}</figcaption>
-          </figure>
-          <div className="mt-4 columns-1 gap-4 sm:mt-8 sm:columns-2 sm:gap-6 lg:gap-8">
-            {rest.map((img) => (
-              <Image
-                key={img.src}
-                src={img.src}
-                alt={img.alt}
-                width={img.width}
-                height={img.height}
-                sizes="(min-width: 1280px) 600px, (min-width: 640px) 50vw, 100vw"
-                className="mb-4 h-auto w-full break-inside-avoid bg-surface-alt sm:mb-6 lg:mb-8"
-              />
+          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:gap-8">
+            {columns.map((col, c) => (
+              <div key={c} className="flex flex-col gap-4 sm:gap-6 lg:gap-8">
+                {col.map((img) => (
+                  <Image
+                    key={img.src}
+                    src={img.src}
+                    alt={img.alt}
+                    width={img.width}
+                    height={img.height}
+                    loading={img === project.images[0] || img === project.images[1] ? "eager" : "lazy"}
+                    sizes="(min-width: 1280px) 600px, (min-width: 640px) 50vw, 100vw"
+                    className="h-auto w-full bg-surface-alt"
+                  />
+                ))}
+              </div>
             ))}
           </div>
         </Container>
