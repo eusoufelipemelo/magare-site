@@ -16,6 +16,8 @@ export type Project = {
   rooms: string[];
   /** Número da foto usada como capa (1 = primeira). */
   cover: number;
+  /** Número da foto horizontal usada no topo da página do projeto. */
+  hero: number;
   images: ProjectImage[];
 };
 
@@ -29,6 +31,7 @@ function img(slug: string, n: number, size: { width: number; height: number }, a
 export const projects: Project[] = [
   {
     slug: "casa-lago-norte",
+    hero: 12,
     cover: 3,
     title: "Casa no Lago Norte",
     kind: "Casa",
@@ -53,6 +56,7 @@ export const projects: Project[] = [
   },
   {
     slug: "apartamento-sqs-309",
+    hero: 1,
     cover: 1,
     title: "Apartamento na SQS 309",
     kind: "Apartamento",
@@ -75,6 +79,7 @@ export const projects: Project[] = [
   },
   {
     slug: "casacor-2024",
+    hero: 1,
     cover: 1,
     title: "Ambiente na CASACOR 2024",
     kind: "Mostra de decoração",
@@ -95,6 +100,7 @@ export const projects: Project[] = [
   },
   {
     slug: "casa-alphaville",
+    hero: 1,
     cover: 2,
     title: "Casa no Alphaville",
     kind: "Casa",
@@ -114,6 +120,7 @@ export const projects: Project[] = [
   },
   {
     slug: "apartamento-sqs-210",
+    hero: 1,
     cover: 1,
     title: "Apartamento na SQS 210",
     kind: "Apartamento",
@@ -133,6 +140,7 @@ export const projects: Project[] = [
   },
   {
     slug: "quarto-juvenil",
+    hero: 1,
     cover: 4,
     title: "Quarto juvenil",
     kind: "Apartamento",
@@ -149,6 +157,7 @@ export const projects: Project[] = [
   },
   {
     slug: "area-gourmet",
+    hero: 1,
     cover: 2,
     title: "Casa com área gourmet",
     kind: "Casa",
@@ -169,6 +178,55 @@ export function getProject(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);
 }
 
+export function heroOf(p: Project): ProjectImage {
+  return p.images[p.hero - 1] ?? p.images[0];
+}
+
 export function coverOf(p: Project): ProjectImage {
   return p.images[p.cover - 1] ?? p.images[0];
 }
+
+/** Categorias da galeria da Home. */
+export const galleryCategories = ["Cozinhas", "Salas", "Banheiros e lavabos", "Closets e armários", "Áreas gourmet", "Quartos"] as const;
+export type GalleryCategory = (typeof galleryCategories)[number];
+export type GalleryItem = ProjectImage & { category: GalleryCategory; project: Pick<Project, "slug" | "title"> };
+
+/** Seleção de fotos para a galeria, intercalando ambientes e formatos. */
+const gallerySelection: [string, number, GalleryCategory][] = [
+  ["casa-alphaville", 1, "Cozinhas"],
+  ["casa-lago-norte", 6, "Banheiros e lavabos"],
+  ["apartamento-sqs-309", 8, "Closets e armários"],
+  ["casacor-2024", 1, "Salas"],
+  ["casa-lago-norte", 4, "Cozinhas"],
+  ["area-gourmet", 1, "Áreas gourmet"],
+  ["quarto-juvenil", 4, "Quartos"],
+  ["apartamento-sqs-309", 1, "Salas"],
+  ["apartamento-sqs-309", 7, "Banheiros e lavabos"],
+  ["casa-lago-norte", 8, "Áreas gourmet"],
+  ["apartamento-sqs-210", 1, "Cozinhas"],
+  ["casa-lago-norte", 2, "Salas"],
+  ["casacor-2024", 3, "Quartos"],
+  ["apartamento-sqs-210", 6, "Closets e armários"],
+  ["apartamento-sqs-309", 4, "Cozinhas"],
+  ["casa-lago-norte", 10, "Banheiros e lavabos"],
+  ["casacor-2024", 7, "Salas"],
+  ["casa-alphaville", 2, "Cozinhas"],
+  ["apartamento-sqs-309", 6, "Closets e armários"],
+  ["apartamento-sqs-210", 3, "Salas"],
+  ["area-gourmet", 3, "Áreas gourmet"],
+  ["quarto-juvenil", 1, "Quartos"],
+  ["casa-lago-norte", 3, "Cozinhas"],
+  ["apartamento-sqs-210", 5, "Banheiros e lavabos"],
+  ["casacor-2024", 4, "Salas"],
+  ["apartamento-sqs-309", 10, "Closets e armários"],
+  ["casa-alphaville", 6, "Salas"],
+  ["casacor-2024", 2, "Cozinhas"],
+  ["apartamento-sqs-309", 9, "Banheiros e lavabos"],
+  ["casa-lago-norte", 11, "Closets e armários"],
+];
+
+export const gallery: GalleryItem[] = gallerySelection.flatMap(([slug, n, category]) => {
+  const project = getProject(slug);
+  const image = project?.images[n - 1];
+  return project && image ? [{ ...image, category, project: { slug: project.slug, title: project.title } }] : [];
+});

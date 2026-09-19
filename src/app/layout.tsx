@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import type { CSSProperties } from "react";
 import { JsonLd } from "@/components/JsonLd";
 import { SiteFooter } from "@/components/SiteFooter";
+import { CookieNotice } from "@/components/CookieNotice";
+import { SiteEffects } from "@/components/SiteEffects";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WhatsAppFloat } from "@/components/WhatsAppFloat";
 import { siteUrl } from "@/lib/env";
@@ -56,7 +58,11 @@ const themeVars = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang={siteConfig.language} style={themeVars} className={`${displayFont.variable} ${bodyFont.variable} h-full antialiased`}>
+    <html lang={siteConfig.language} style={themeVars} className={`${displayFont.variable} ${bodyFont.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        {/* Marca que o JS está ativo antes da pintura: as animações de entrada só escondem conteúdo com JS. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body className="flex min-h-full flex-col">
         <a
           href="#conteudo"
@@ -70,6 +76,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <SiteFooter />
         <WhatsAppFloat />
+        <CookieNotice />
+        <SiteEffects />
         <JsonLd data={siteGraph()} />
       </body>
     </html>

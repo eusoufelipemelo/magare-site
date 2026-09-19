@@ -25,6 +25,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
     { url: absoluteUrl("/sobre"), changeFrequency: "monthly", priority: 0.7 },
     { url: absoluteUrl("/contato"), changeFrequency: "yearly", priority: 0.7 },
+    ...["/politica-de-privacidade", "/politica-de-cookies", "/lgpd", "/termos-de-uso"].map((path) => ({
+      url: absoluteUrl(path),
+      changeFrequency: "yearly" as const,
+      priority: 0.2,
+    })),
     { url: absoluteUrl("/blog"), changeFrequency: "daily", priority: 0.8, ...(latest ? { lastModified: latest } : {}) },
   ];
 

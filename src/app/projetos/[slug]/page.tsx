@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Container } from "@/components/Container";
-import { CtaBlock } from "@/components/CtaBlock";
+import { LeadSection } from "@/components/LeadSection";
+import { PageHeader } from "@/components/PageHeader";
+import { ProjectGallery } from "@/components/ProjectGallery";
 import { JsonLd } from "@/components/JsonLd";
 import { WhatsAppIcon } from "@/components/icons";
-import { getProject, projects } from "@/content/projetos";
+import { getProject, heroOf, projects } from "@/content/projetos";
 import { absoluteUrl } from "@/lib/env";
 import { truncate, whatsappUrl } from "@/lib/format";
 import { organizationId } from "@/lib/jsonld";
@@ -51,14 +51,7 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
 
   const index = projects.findIndex((p) => p.slug === project.slug);
   const next = projects[(index + 1) % projects.length];
-  // Duas colunas equilibradas pela altura das fotos, mantendo a ordem: as duas primeiras ficam lado a lado.
-  const columns: (typeof project.images)[] = [[], []];
-  const heights = [0, 0];
-  for (const img of project.images) {
-    const c = heights[0] <= heights[1] ? 0 : 1;
-    columns[c].push(img);
-    heights[c] += img.height / img.width;
-  }
+  const heroImg = heroOf(project);
   const c = siteConfig.contact;
   const wa = whatsappUrl(c.whatsapp, `Olá! Vi o projeto "${project.title}" no site da Magare e gostaria de conversar sobre o meu espaço.`);
 
@@ -78,60 +71,44 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
         }}
       />
 
-      <header>
-        <Container className="pb-10 pt-8 sm:pb-14 sm:pt-12">
-          <Breadcrumbs
-            items={[
-              { name: "Início", path: "/" },
-              { name: "Projetos", path: "/projetos" },
-              { name: project.title, path: `/projetos/${project.slug}` },
-            ]}
-          />
-          <div className="mt-6 grid gap-8 lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] lg:items-end lg:gap-16">
-            <div>
-              <h1 className="font-display text-[2.5rem] leading-[1.06] text-ink sm:text-6xl">{project.title}</h1>
-              <p className="mt-5 max-w-2xl text-[1.0625rem] leading-relaxed text-muted sm:text-lg">{project.summary}</p>
-            </div>
-            <div>
-              <h2 className="font-sans text-sm font-bold text-ink">Ambientes</h2>
-              <ul className="mt-3 flex flex-wrap gap-2">
-                {project.rooms.map((r) => (
-                  <li key={r} className="rounded-full border border-line px-3.5 py-1.5 text-[0.95rem] text-ink">
-                    {r}
-                  </li>
-                ))}
-              </ul>
-              {wa ? (
-                <a href={wa} target="_blank" rel="noopener" className="btn btn-primary mt-7 w-full sm:w-auto">
-                  <WhatsAppIcon />
-                  Quero um projeto assim
-                </a>
-              ) : null}
-            </div>
+      <PageHeader
+        title={project.title}
+        intro={`${project.kind === "Mostra de decoração" ? project.kind : `${project.kind}, ${project.place}`}. ${project.rooms.join(", ")}.`}
+        image={{ src: heroImg.src, alt: heroImg.alt }}
+        crumbs={[
+          { name: "Início", path: "/" },
+          { name: "Projetos", path: "/projetos" },
+          { name: project.title, path: `/projetos/${project.slug}` },
+        ]}
+      />
+
+      <section aria-label="Sobre o projeto" className="py-16 sm:py-24">
+        <Container className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-8">
+          <p data-reveal="fade" className="font-display text-[1.7rem] leading-snug text-ink sm:text-[2.2rem] lg:col-span-8">
+            {project.summary}
+          </p>
+          <div data-reveal="fade" className="lg:col-span-3 lg:col-start-10">
+            <h2 className="font-sans text-sm font-bold text-ink">Ambientes</h2>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {project.rooms.map((r) => (
+                <li key={r} className="rounded-full border border-line px-3.5 py-1.5 text-[0.95rem] text-ink">
+                  {r}
+                </li>
+              ))}
+            </ul>
+            {wa ? (
+              <a href={wa} target="_blank" rel="noopener" className="btn btn-primary mt-7 w-full">
+                <WhatsAppIcon />
+                Quero um projeto assim
+              </a>
+            ) : null}
           </div>
         </Container>
-      </header>
+      </section>
 
       <section aria-label={`Fotos do projeto ${project.title}`}>
         <Container>
-          <div className="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:gap-8">
-            {columns.map((col, c) => (
-              <div key={c} className="flex flex-col gap-4 sm:gap-6 lg:gap-8">
-                {col.map((img) => (
-                  <Image
-                    key={img.src}
-                    src={img.src}
-                    alt={img.alt}
-                    width={img.width}
-                    height={img.height}
-                    loading={img === project.images[0] || img === project.images[1] ? "eager" : "lazy"}
-                    sizes="(min-width: 1280px) 600px, (min-width: 640px) 50vw, 100vw"
-                    className="h-auto w-full bg-surface-alt"
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
+          <ProjectGallery images={project.images} />
         </Container>
       </section>
 
@@ -147,10 +124,8 @@ export default async function ProjectPage({ params }: PageProps<"/projetos/[slug
             <path d="M4 12h16m-6-6 6 6-6 6" />
           </svg>
         </Link>
-        <div className="mt-14 sm:mt-20">
-          <CtaBlock title="Quer um projeto assim para o seu espaço?" />
-        </div>
       </Container>
+      <LeadSection />
     </>
   );
 }

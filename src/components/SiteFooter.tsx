@@ -4,6 +4,13 @@ import { siteConfig } from "@/site.config";
 import { ClockIcon, MailIcon, PhoneIcon, PinIcon, WhatsAppIcon } from "./icons";
 import { Logo } from "./Logo";
 
+const legal = [
+  { label: "Política de Privacidade", href: "/politica-de-privacidade" },
+  { label: "Política de Cookies", href: "/politica-de-cookies" },
+  { label: "LGPD", href: "/lgpd" },
+  { label: "Termos de Uso", href: "/termos-de-uso" },
+];
+
 export function SiteFooter() {
   const c = siteConfig.contact;
   const a = c.address;
@@ -93,13 +100,25 @@ export function SiteFooter() {
         </div>
       </div>
       <div className="border-t border-surface/15">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 pb-24 text-sm text-surface/60 sm:flex-row sm:justify-between sm:px-6 sm:pb-5 lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-7 pb-24 text-sm text-surface/60 sm:px-6 sm:pb-7 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <p>
             © {year} {siteConfig.legalName || siteConfig.name}
           </p>
+          <nav aria-label="Documentos legais">
+            <ul className="flex flex-wrap gap-x-5 gap-y-2">
+              {legal.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="inline-flex min-h-8 items-center hover:text-surface hover:underline">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
           <p>
-            <a href="/feed.xml" className="hover:text-surface hover:underline">
-              RSS do blog
+            Desenvolvido por:{" "}
+            <a href="https://www.outboxgroup.com.br" target="_blank" rel="noopener" className="text-surface/85 underline decoration-surface/30 underline-offset-4 hover:text-surface hover:decoration-surface">
+              OutBox Soluções Digitais
             </a>
           </p>
         </div>

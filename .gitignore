@@ -43,3 +43,6 @@ next-env.d.ts
 
 # ferramentas locais
 /.claude/
+
+# worker do MapLibre (gerado no prebuild)
+/public/maplibre/

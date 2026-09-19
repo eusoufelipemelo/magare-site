@@ -102,6 +102,17 @@ export const siteConfig = {
       "Guará",
       "Vicente Pires",
     ],
+    /** Coordenadas aproximadas do centro de cada região (mapa de "Onde atendemos"). */
+    regionPoints: [
+      { name: "Águas Claras", lat: -15.8397, lng: -48.0266 },
+      { name: "Sudoeste", lat: -15.7975, lng: -47.9255 },
+      { name: "Asa Norte", lat: -15.7631, lng: -47.8828 },
+      { name: "Asa Sul", lat: -15.8163, lng: -47.9053 },
+      { name: "Lago Norte", lat: -15.7355, lng: -47.8585 },
+      { name: "Noroeste", lat: -15.7391, lng: -47.9149 },
+      { name: "Guará", lat: -15.8226, lng: -47.9791 },
+      { name: "Vicente Pires", lat: -15.8034, lng: -48.0281 },
+    ],
   },
 
   /** Perfis oficiais (entram no JSON-LD como sameAs). */

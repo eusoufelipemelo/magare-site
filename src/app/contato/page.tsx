@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { ContactList } from "@/components/ContactList";
 import { Container } from "@/components/Container";
 import { JsonLd } from "@/components/JsonLd";
+import { LeadForm } from "@/components/LeadForm";
 import { PageHeader } from "@/components/PageHeader";
-import { CheckIcon, PinIcon, WhatsAppIcon } from "@/components/icons";
+import { ServiceAreaMap } from "@/components/ServiceAreaMap";
+import { SplitTitle } from "@/components/SplitTitle";
+import { PhoneIcon, PinIcon, WhatsAppIcon } from "@/components/icons";
 import { absoluteUrl } from "@/lib/env";
 import { whatsappUrl } from "@/lib/format";
 import { organizationId } from "@/lib/jsonld";
 import { pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/site.config";
 
-const intro = "O atendimento da Magare começa pelo WhatsApp. Conte qual ambiente você quer transformar e em que bairro de Brasília ele fica.";
+const intro = "Conte qual ambiente você quer transformar e em que bairro de Brasília ele fica. O atendimento da Magare continua pelo WhatsApp.";
 
 export const metadata: Metadata = pageMetadata({
   title: "Contato",
@@ -23,88 +24,97 @@ export default function ContactPage() {
   const c = siteConfig.contact;
   const wa = whatsappUrl(c.whatsapp, c.whatsappMessage);
   const instagram = siteConfig.social.find((s) => s.label === "Instagram");
+  const row = "flex gap-4 border-b border-line py-5";
   return (
     <>
       <JsonLd data={{ "@context": "https://schema.org", "@type": "ContactPage", url: absoluteUrl("/contato"), about: { "@id": organizationId() } }} />
       <PageHeader
         title="Vamos conversar sobre o seu espaço"
         intro={intro}
+        image={{ src: "/projetos/area-gourmet/01.jpg", alt: "Área gourmet com churrasqueira, bancada extensa e janela para a área verde" }}
         crumbs={[
           { name: "Início", path: "/" },
           { name: "Contato", path: "/contato" },
         ]}
-      >
-        {wa ? (
-          <div className="mt-8">
-            <a href={wa} target="_blank" rel="noopener" className="btn btn-primary w-full sm:w-auto">
-              <WhatsAppIcon />
-              Conversar no WhatsApp
-            </a>
-          </div>
-        ) : null}
-      </PageHeader>
+      />
 
-      <Container className="grid gap-14 py-14 sm:py-20 md:grid-cols-2 lg:grid-cols-[minmax(0,5fr)_minmax(0,4fr)_minmax(0,4fr)] lg:gap-14">
-        <section aria-labelledby="canais">
-          <h2 id="canais" className="font-display text-[1.75rem] text-ink">
-            Canais de atendimento
-          </h2>
-          <div className="mt-4">
-            <ContactList large />
+      <section aria-labelledby="formulario" className="py-20 sm:py-28">
+        <Container className="grid gap-16 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-7">
+            <SplitTitle id="formulario" text="Solicite seu projeto" className="font-display text-[2.4rem] leading-tight text-ink sm:text-[3.4rem]" />
+            <p data-reveal="fade" className="mt-4 max-w-xl leading-relaxed text-muted">
+              A mensagem chega organizada no WhatsApp da Magare. Os dados não ficam guardados no site.
+            </p>
+            <div data-reveal="fade" className="mt-10">
+              <LeadForm whatsapp={c.whatsapp} regions={c.regions} />
+            </div>
           </div>
-          <ul className="divide-y divide-line border-y border-line">
-            <li className="flex gap-3.5 py-4">
-              <PinIcon className="mt-0.5 shrink-0 text-brand" />
-              <span>
-                <span className="block text-sm text-muted">Região atendida</span>
-                <span className="block text-lg font-bold text-ink">{c.areaServed}</span>
-              </span>
-            </li>
-            {instagram ? (
-              <li className="flex gap-3.5 py-4">
-                <svg aria-hidden width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="mt-0.5 shrink-0 text-brand">
-                  <rect x="3" y="3" width="18" height="18" rx="5" />
-                  <circle cx="12" cy="12" r="4" />
-                  <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
-                </svg>
-                <span>
-                  <span className="block text-sm text-muted">Instagram</span>
-                  <a href={instagram.href} target="_blank" rel="noopener me" className="link block text-lg font-bold">
-                    @magareambientesplanejados
-                  </a>
-                </span>
-              </li>
-            ) : null}
-          </ul>
-        </section>
 
-        <section aria-labelledby="como">
-          <h2 id="como" className="font-display text-[1.75rem] text-ink">
-            Para agilizar o atendimento
-          </h2>
-          <ul className="mt-6 space-y-5">
-            {[
-              "Diga seu nome e o bairro onde fica o imóvel.",
-              "Conte qual ambiente quer transformar e se é casa, apartamento ou espaço comercial.",
-              "Se tiver, envie fotos, medidas ou a planta do espaço.",
-            ].map((t) => (
-              <li key={t} className="flex gap-3.5">
-                <CheckIcon className="mt-1 shrink-0 text-brand" />
-                <span className="leading-relaxed text-ink">{t}</span>
-              </li>
-            ))}
-          </ul>
-          <h2 className="mt-12 font-display text-[1.75rem] text-ink">Regiões com foco de atendimento</h2>
-          <p className="mt-3 leading-relaxed text-muted">{c.regions.join(", ")} e regiões próximas.</p>
-        </section>
+          <aside aria-labelledby="canais" className="lg:col-span-4 lg:col-start-9">
+            <div className="bg-surface-alt p-7 sm:p-9 lg:sticky lg:top-28">
+              <h2 id="canais" className="font-display text-[1.9rem] text-ink">
+                Canais de atendimento
+              </h2>
+              <ul className="mt-4 border-t border-line">
+                {wa ? (
+                  <li className={row}>
+                    <WhatsAppIcon className="mt-0.5 shrink-0 text-brand" />
+                    <span>
+                      <span className="block text-sm text-muted">WhatsApp</span>
+                      <a href={wa} target="_blank" rel="noopener" className="link block text-lg font-bold">
+                        {c.phone}
+                      </a>
+                    </span>
+                  </li>
+                ) : null}
+                <li className={row}>
+                  <PhoneIcon className="mt-0.5 shrink-0 text-brand" />
+                  <span>
+                    <span className="block text-sm text-muted">Telefone</span>
+                    <a href={`tel:${c.phoneHref}`} className="block text-lg font-bold text-ink hover:text-brand">
+                      {c.phone}
+                    </a>
+                  </span>
+                </li>
+                {instagram ? (
+                  <li className={row}>
+                    <svg aria-hidden width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="mt-0.5 shrink-0 text-brand">
+                      <rect x="3" y="3" width="18" height="18" rx="5" />
+                      <circle cx="12" cy="12" r="4" />
+                      <circle cx="17.5" cy="6.5" r="0.6" fill="currentColor" />
+                    </svg>
+                    <span className="min-w-0">
+                      <span className="block text-sm text-muted">Instagram</span>
+                      <a href={instagram.href} target="_blank" rel="noopener me" className="link block break-words text-lg font-bold">
+                        @magareambientesplanejados
+                      </a>
+                    </span>
+                  </li>
+                ) : null}
+                <li className={row}>
+                  <PinIcon className="mt-0.5 shrink-0 text-brand" />
+                  <span>
+                    <span className="block text-sm text-muted">Região atendida</span>
+                    <span className="block text-lg font-bold text-ink">{c.areaServed}</span>
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </aside>
+        </Container>
+      </section>
 
-        <figure className="md:col-span-2 lg:col-span-1">
-          <div className="relative aspect-[4/5] overflow-hidden bg-surface-alt">
-            <Image src="/projetos/casa-alphaville/02.jpg" alt="Corredor da cozinha com ilha e janela do piso ao teto para a paisagem" fill sizes="(min-width: 1024px) 30vw, 100vw" className="object-cover" />
+      <section aria-labelledby="regioes" className="border-t border-line bg-surface-alt py-24 sm:py-32">
+        <Container>
+          <SplitTitle id="regioes" text="Onde atendemos" className="font-display text-[2.4rem] leading-tight text-ink sm:text-[3.6rem]" />
+          <p data-reveal="fade" className="mt-4 max-w-xl leading-relaxed text-muted">
+            Brasília e entorno, com foco nestas regiões. Escolha a sua para começar a conversa.
+          </p>
+          <div data-reveal="fade" className="mt-12">
+            <ServiceAreaMap regions={c.regionPoints} whatsapp={c.whatsapp} />
           </div>
-          <figcaption className="cota mt-4">Cozinha, Casa no Alphaville</figcaption>
-        </figure>
-      </Container>
+        </Container>
+      </section>
     </>
   );
 }
